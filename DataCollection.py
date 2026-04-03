@@ -19,25 +19,34 @@ debug = False
 flipImage = False  # Flip camera if mirrored
 
 # ==== Find Available Camera ====
+
 def find_camera(preferred=0, max_index=5):
-    print(f"🔍 Trying camera index {preferred}...")
-    cap = cv2.VideoCapture(preferred)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, camWidth)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, camHeight)
-    if cap.isOpened():
-        print(f"✅ Using camera index {preferred}")
-        return cap
-    for i in range(max_index):
-        if i == preferred:
-            continue
-        cap = cv2.VideoCapture(i)
+    """
+    Tries to find a working camera by iterating through indices.
+    Tests both for 'isOpened' and 'read' success.
+    """
+    for idx in range(max_index):
+        # We start with the preferred index (usually 0)
+        current_idx = preferred if idx == 0 else (idx if idx <= preferred else idx)
+        if idx > 0 and current_idx == preferred: continue # skip redundant
+        
+        print(f"🔍 Testing camera index {current_idx}...")
+        cap = cv2.VideoCapture(current_idx)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, camWidth)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, camHeight)
+        
         if cap.isOpened():
-            print(f"⚠️ Fallback to camera index {i}")
-            return cap
-    print("❌ No camera found.")
+            success, img = cap.read()
+            if success:
+                print(f"✅ Working camera found at index {current_idx}")
+                return cap
+            else:
+                print(f"⚠️ Index {current_idx} is open but failed to provide frames. Releasing...")
+                cap.release()
+                
+    print("❌ No working camera found. Please check your connections or other apps.")
     return None
+
 
 cap = find_camera()
 if cap is None:
