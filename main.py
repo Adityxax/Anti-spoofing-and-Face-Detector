@@ -29,7 +29,7 @@ def find_camera(preferred=0, max_index=5, camWidth=640, camHeight=480):
 
 def main():
     # Load the trained model. Update the path if necessary (e.g. 'runs/detect/face_detector_run/weights/best.pt')
-    model = YOLO("yolov8n.pt")  # Change to best.pt once trained
+    model = YOLO("models/yolov8n.pt")  # Change to best.pt once trained
 
     cap = find_camera()
     if cap is None:
