@@ -5,7 +5,7 @@ import os
 from time import time
 
 # ==== Settings ====
-classID = 1  # 0: fake, 1: real
+classID = 0  # 0: fake, 1: real (Standardized to 0 for single class if needed, or keeping it as 1 for face)
 outputFolderPath = 'Datasets/DataCollect'
 os.makedirs(outputFolderPath, exist_ok=True)
 confidence = 0.8
@@ -14,7 +14,7 @@ blurThreshold = 35
 offsetPercentageW = 10
 offsetPercentageH = 20
 camWidth, camHeight = 640, 480
-floatingPoint = 64
+floatingPoint = 6
 debug = False
 flipImage = False  # Flip camera if mirrored
 
@@ -22,8 +22,8 @@ flipImage = False  # Flip camera if mirrored
 def find_camera(preferred=0, max_index=5):
     print(f"🔍 Trying camera index {preferred}...")
     cap = cv2.VideoCapture(preferred)
-    cap.set(3, camWidth)
-    cap.set(4, camHeight)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, camWidth)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, camHeight)
     if cap.isOpened():
         print(f"✅ Using camera index {preferred}")
         return cap
@@ -31,8 +31,8 @@ def find_camera(preferred=0, max_index=5):
         if i == preferred:
             continue
         cap = cv2.VideoCapture(i)
-        cap.set(3, camWidth)
-        cap.set(4, camHeight)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, camWidth)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, camHeight)
         if cap.isOpened():
             print(f"⚠️ Fallback to camera index {i}")
             return cap
@@ -76,10 +76,11 @@ while True:
             offsetW = int((offsetPercentageW / 100) * w)
             offsetH = int((offsetPercentageH / 100) * h)
 
+            ih, iw, _ = img.shape
             x = max(x - offsetW, 0)
             y = max(y - offsetH * 3, 0)
-            w = min(w + offsetW * 2, camWidth - x)
-            h = min(h + int(offsetH * 3.5), camHeight - y)
+            w = min(w + offsetW * 2, iw - x)
+            h = min(h + int(offsetH * 3.5), ih - y)
 
             imgFace = img[y:y + h, x:x + w]
             if imgFace.size == 0:

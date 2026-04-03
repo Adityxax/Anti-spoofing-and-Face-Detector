@@ -40,97 +40,44 @@ Designed for use cases like:
 
 ## 📁 Project Structure
 
-```
-anti-spoofing-face-detector/
-│
-├── models/
-│   └── yolov8n.pt
-│
-├── src/
-│   ├── detector.py
-│   ├── anti_spoof.py
-│   └── main.py
-│
-├── data/
-│   └── samples/
-│
-├── requirements.txt
-├── README.md
-└── LICENSE
+```text
+Anti-spoofing-and-Face-Detector/
+├── Datasets/
+│   ├── DataCollect/        # Raw captured data
+│   └── SplitData/          # Organized datasets (train/val/test)
+├── models/                 # Pre-trained and fine-tuned models
+├── runs/                   # Training logs and weights
+├── DataCollection.py
+├── SplitData.py
+├── Train.py
+└── main.py
 ```
 
 ---
 
-## ⚙️ Installation
+## 🛠️ Components
 
-### 1️⃣ Clone the Repository
-
-```bash
-git clone https://github.com/your-username/anti-spoofing-face-detector.git
-cd anti-spoofing-face-detector
-```
-
-### 2️⃣ Create Virtual Environment (Recommended)
-
-```bash
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# Linux / Mac
-source venv/bin/activate
-```
-
-### 3️⃣ Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
+| Script | Purpose |
+| :--- | :--- |
+| `DataCollection.py` | Captures images and generates normalized YOLO labels from a webcam feed. |
+| `SplitData.py` | Automatically splits the collected data into Train, Validation, and Test sets. |
+| `Train.py` | Handles the model training process using Ultralytics YOLO. |
+| `main.py` | Real-time inference script for live detection and anti-spoofing testing. |
 
 ---
 
-## 📦 Requirements
+## 🏁 Quick Start
 
-Create a `requirements.txt` file with:
-
-```
-opencv-python
-numpy
-dlib
-ultralytics
-cvzone
-face-recognition
-pandas
-torch
-torchvision
-```
-
-> Note: Dlib may require **CMake and Visual Studio Build Tools** on Windows.
-
----
-
-## ▶️ Usage
-
-### Run the Application
-
-```bash
-python src/main.py
-```
-
-### Controls
-
-* `Q` → Quit the application
-* Automatically detects faces and labels them as:
-
-  * ✅ Real Face
-  * ❌ Spoof Detected
+1.  **Collect Data**: Run `DataCollection.py` to capture "real" vs "fake" faces.
+2.  **Organize**: Run `SplitData.py` to generate the YOLO-ready directory structure.
+3.  **Train**: Run `Train.py` to build your custom model.
+4.  **Inference**: Run `main.py` to start detection.
 
 ---
 
 ## 🧪 How It Works
 
-1. **YOLOv8** detects faces in each frame
+1. **YOLOv8/11** detects faces in each frame
 2. Detected face is passed to **Anti-Spoof Model**
 3. Facial landmarks and texture analysis are extracted
 4. Deep learning model classifies the face as **Real or Fake**
@@ -184,3 +131,6 @@ Computer Vision & AI Enthusiast
 ## ⭐ Star This Repo
 
 If this project helped you, consider giving it a star. It makes my day and tells the algorithm I’m not completely useless.
+
+---
+*Created with ❤️ for premium computer vision development.*

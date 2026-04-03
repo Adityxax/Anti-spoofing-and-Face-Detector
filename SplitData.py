@@ -3,14 +3,15 @@ import random
 import shutil
 from itertools import islice
 
-outputFolderPath ="datasets/SplitData"
-inputFolderPath ="datasets/all"
-splitRatio = {"train":0.7,"val":0.2,"test":0.1}
+outputFolderPath = "Datasets/SplitData"
+inputFolderPath = "Datasets/DataCollect"
+splitRatio = {"train": 0.7, "val": 0.2, "test": 0.1}
 classes = ["fake", "real"]
-try:
+
+# Clear and recreate output directory
+if os.path.exists(outputFolderPath):
     shutil.rmtree(outputFolderPath)
-except OSError as e:
-    os.mkdir(outputFolderPath)
+os.makedirs(outputFolderPath, exist_ok=True)
 
 # -------Directories to create-----
 os.makedirs(f"{outputFolderPath}/train/images",exist_ok=True)
@@ -40,10 +41,10 @@ lenVal = int(lenData*splitRatio['val'])
 lenTest = int(lenData*splitRatio['test'])
 print(f'Total Images:{lenData}\n Split: {lenTrain},{lenVal},{lenTest}')
 
-#----Put the remaining images in Training-----
+# ----Put the remaining images in Training-----
 if lenData != lenTrain + lenVal + lenTest:
     remaining = lenData - (lenTrain + lenVal + lenTest)
-    lenTrain = remaining
+    lenTrain += remaining
 
 # -------Split the list-----
 lengthToSplit = (lenTrain, lenVal, lenTest)
@@ -66,17 +67,18 @@ for i, out in enumerate(Output):
 
 print("Split Process Completed......")
 
-#--------Creating Data.yaml file------
-dataYaml= (f'path: {outputFolderPath}\n\
-train : ../train/images\n\
-val : ../val/images\n\
-test : ../test/images\n\
-\n\
-nc: {len(classes)}\n\
-names: {classes}')
+# --------Creating data.yaml file------
+# Paths in data.yaml are relative to the 'path' key
+dataYaml = (f"path: {os.path.abspath(outputFolderPath)}\n"
+            f"train: train/images\n"
+            f"val: val/images\n"
+            f"test: test/images\n\n"
+            f"nc: {len(classes)}\n"
+            f"names: {classes}")
 
-f= open(f"{outputFolderPath}/data.yaml", 'w')
-f.write(dataYaml)
-f.close()
+with open(f"{outputFolderPath}/data.yaml", 'w') as f:
+    f.write(dataYaml)
+
+print(f"data.yaml file created at {outputFolderPath}/data.yaml")
 
 print("Data.yaml file created...")
